@@ -1,0 +1,19 @@
+{
+  "name": "apirest-node-express-sqlite",
+  "version": "1.0.0",
+  "description": "apirest con nodejs, express y sqlite",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alfonso Sánchez Ferrer",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "express": "^4.17.3",
+    "md5": "^2.3.0",
+    "sqlite3": "^5.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
