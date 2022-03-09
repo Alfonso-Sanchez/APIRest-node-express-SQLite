@@ -3,7 +3,7 @@ var express = require("express")
 var app = express()
 
 // Server port
-var HTTP_PORT = 9000 
+var HTTP_PORT = 6700
 // Start server
 app.listen(HTTP_PORT, () => {
     console.log("Servidor escoltant a l'adreça http://localhost:%PORT%".replace("%PORT%",HTTP_PORT))
