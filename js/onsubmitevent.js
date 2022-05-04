@@ -34,3 +34,5 @@ function validateForm () {
 //        return false
 //    }
 //}
+
+// ofuscar codigo ./javascript-obfuscator ~/Escritorio/APIRest-node-express-SQLite/js/onsubmitevent.js 

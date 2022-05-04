@@ -4,12 +4,29 @@ var app = express()
 var db = require("./database.js")
 var bodyParser = require("body-parser");
 var md5 = require('md5')
+var fs = require("fs");
+var https = require("https");
 // Server port
-var HTTP_PORT = 6700
+//var HTTP_PORT = 6700
 // Start server
-app.listen(HTTP_PORT, () => {
-    console.log("Servidor escoltant a l'adreça http://localhost:%PORT%".replace("%PORT%",HTTP_PORT))
-});
+//app.listen(HTTP_PORT, '10.10.10.1'); {
+    //console.log("Servidor escoltant a l'adreça http://localhost:%PORT%".replace("%PORT%",HTTP_PORT))
+//    console.log("Servidor funcionando http://10.10.10.1:6700")
+//}
+// Start server HTTPS
+https
+  .createServer(
+    {
+      key: fs.readFileSync("certificado/server.key"),
+      cert: fs.readFileSync("certificado/server.cert"),
+    },
+    app
+  )
+  .listen(6700, function () {
+    console.log(
+      "Web https://localhost:6700/"
+    );
+  });
 // Root endpoint
 app.get("/", (req, res, next) => {
     res.json({"message":"Ok"})
