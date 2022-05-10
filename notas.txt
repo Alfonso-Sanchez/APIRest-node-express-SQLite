@@ -1,0 +1,5 @@
+- Funciona login con token correctamente. 
+- Subir todo contenido de la carpeta web a apache para correcto funcionamiento.
+
+Requisitos apache:
+- https
