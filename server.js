@@ -61,11 +61,12 @@ rutasProtegidas.use((req, res, next) => {
     }
  }); */
 
+ 
 const rutasProtegidas_transparente = express.Router();
  rutasProtegidas_transparente.use((req, res, next) => {
      const token = req.cookies.access_token;
      if (!token) {
-         res.redirect(301, "https://localhost/login_transparente.html")
+        return res.redirect(301, "https://localhost/login_transparente.html");
      }
      else {
          jwt.verify(token,process.env.TOKEN_SECRET, (err,decoded) => {
@@ -268,10 +269,10 @@ app.get("/api/cookie/datos_transparente", rutasProtegidas_transparente, (req,res
 });
 
 app.get("/api/cookie/logout", rutasProtegidas_transparente, (req, res) => {
-    return res
+    res
       .clearCookie("access_token")
       .status(200)
-      .json({ message: "Loged out" });
+      .send({Message: "Loged out > login page https://localhost/login_transparente.html"})
   });
 
 app.patch("/api/user/:id", (req, res, next) => {
@@ -361,7 +362,7 @@ app.use(function (req, res) {
        // })
    // });//
 //}); const rutasProtegidas_transparente = express.Router(); 
-    rutasProtegidas_transparente.use((req, res, next) => {
+/*     rutasProtegidas_transparente.use((req, res, next) => {
         const token = req.cookies.access_token;
         if (token) {
           jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {      
@@ -375,4 +376,4 @@ app.use(function (req, res) {
         } else {
           res.redirect(301, "https://localhost/login_transparente.html")
         }
-     });
+     }); */
