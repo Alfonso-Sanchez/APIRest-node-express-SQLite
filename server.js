@@ -10,20 +10,26 @@ var jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 const { url } = require("inspector");
+const exphbs = require('express-handlebars')
+
+// Support URL-Encoded bodies
+app.use(bodyParser.urlencoded({ extended: true}));
+// parse cookies from HTTP Request
 app.use(cookieParser())
+// change handlebars extension
+app.engine('hbs', exphbs.engine({
+    extname: '.hbs'
+}));
+app.set('view engine', 'hbs')
 //get config vars
 dotenv.config();
-
 // access config var
 process.env.TOKEN_SECRET;
-
 //Generar un token
 function GenerateAccessToken(email){
     return jwt.sign(email, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
 }
-
 //middleware NO TRANSPARENTE
-
 const rutasProtegidas = express.Router(); 
 rutasProtegidas.use((req, res, next) => {
     const token = req.body.token;
@@ -43,25 +49,6 @@ rutasProtegidas.use((req, res, next) => {
       });
     }
  });
- //middleware TRANSPARENTE
-/*  const rutasProtegidas_transparente = express.Router(); 
-    rutasProtegidas_transparente.use((req, res, next) => {
-    const token = req.cookies.access_token;
-    if (token) {
-      jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {      
-        if (err) {
-            res.redirect(301, "https://localhost/login_transparente.html")   
-        } else {
-          req.decoded = decoded;    
-          next();
-        }
-      });
-    } else {
-      res.redirect(301, "https://localhost/login_transparente.html")
-    }
- }); */
-
- 
 const rutasProtegidas_transparente = express.Router();
  rutasProtegidas_transparente.use((req, res, next) => {
      const token = req.cookies.access_token;
@@ -80,13 +67,6 @@ const rutasProtegidas_transparente = express.Router();
          })
      }
  })
-// Server port
-//var HTTP_PORT = 6700
-// Start server
-//app.listen(HTTP_PORT, '10.10.10.1'); {
-    //console.log("Servidor escoltant a l'adreça http://localhost:%PORT%".replace("%PORT%",HTTP_PORT))
-//    console.log("Servidor funcionando http://10.10.10.1:6700")
-//}
 // Start server HTTPS
 https
   .createServer(
@@ -102,8 +82,9 @@ https
     );
   });
 // Root endpoint
-app.get("/", (req, res, next) => {
-    res.json({"message":"Ok"})
+app.get("/", function (req, res, next) {
+    /* res.json({"message":"Ok"}) */
+    res.render('home.hbs')
 });
 
 // Insert here other API endpoints
@@ -321,59 +302,5 @@ app.delete("/api/user/:id", (req, res, next) => {
 // Default response for any other request
 app.use(function (req, res) {
     res.status(404).json({ "error": "Invalid endpoint" });
-
+    });
 });
-
-});
-// ### DELETE CON REQUISITOS ###
-
-//app.delete("/api/user/", (req, res, next) => {
-    // var errors=[]
-    // if (!req.body.password){
-    //     errors.push("No password specified");
-    // }
-    // if (!req.body.email){
-    //     errors.push("No email specified");
-    // }
-       // email: req.body.email,
-        // if (!req.body.name){
-    //     errors.push("No name specified");
-    // }
-    // if (errors.length){
-    //     res.status(400).json({"error":errors.join(",")});
-    //     return;
-    // }
-  //  var data = {
-    //    name: req.body.name,
-    //    email: req.body.email,
-    //    password : req.body.password
-    //}
-    //var sql ='DELETE FROM user WHERE name = ? AND email = ? AND password = ?'
-    //var params =[data.name, data.email, md5(data.password)]
-    //db.run(sql, params, function (err, result) {
-      //  if (err){
-        //    res.status(400).json({"error": err.message})
-          //  return;
-        //}
-        //res.json({
-          //  "message": "success",
-          //  "data": data,
-          //  "id" : this.lastID
-       // })
-   // });//
-//}); const rutasProtegidas_transparente = express.Router(); 
-/*     rutasProtegidas_transparente.use((req, res, next) => {
-        const token = req.cookies.access_token;
-        if (token) {
-          jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {      
-            if (err) {
-                res.redirect(301, "https://localhost/login_transparente.html")   
-            } else {
-              req.decoded = decoded;    
-              next();
-            }
-          });
-        } else {
-          res.redirect(301, "https://localhost/login_transparente.html")
-        }
-     }); */
