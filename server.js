@@ -106,7 +106,6 @@ https
 //
 // LOGIN COOKIE CON TEMPLATES
 //
-
 // Root endpoint
 app.get("/", function (req, res, next) {
     /* res.json({"message":"Ok"}) */
