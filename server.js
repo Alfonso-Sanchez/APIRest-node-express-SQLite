@@ -67,6 +67,28 @@ const rutasProtegidas_transparente = express.Router();
          })
      }
  })
+// Middleware template
+const rutasProtegidas_template = express.Router();
+ rutasProtegidas_template.use((req, res, next) => {
+     const token = req.cookies.access_token;
+     if (!token) {
+        res.render('login', {
+            message: 'Inicie sesion antes de entrar',
+            messageClass: 'alert-danger'
+        });
+     }
+     else {
+         jwt.verify(token,process.env.TOKEN_SECRET, (err,decoded) => {
+            if (err) {
+                res.render('login')
+            }
+            else {
+                req.decoded = decoded;
+                next();
+            }
+         })
+     }
+ })
 // Start server HTTPS
 https
   .createServer(
@@ -95,12 +117,18 @@ app.get("/", function (req, res, next) {
 app.get('/template/register', (req, res) => {
     res.render('register');
 });
+
 // Pagina de login
 app.get('/template/login', (req, res) => {
     res.render('login');
 });
+// Pagina protegida 
+app.get('/template/protected', rutasProtegidas_template, (req, res) => {
+    res.render('protected');
+});
+
 // Insertar usuarios
-app.post("/template/insert", (req, res) => {
+app.post("/template/register", (req, res) => {
     if (req.body.name == ''){
         res.render('register', {
             message: 'No se ha especificado un nombre',
@@ -143,25 +171,25 @@ app.post("/template/insert", (req, res) => {
         });
     }
 }); 
+
 // Login usuarios
 app.post("/template/login", (req, res, next) => {
     var errors=[]
-    if (!req.body.password){
-        errors.push("No password specified");
-    }
-    if (!req.body.email){
-        errors.push("No email specified");
-    }
-    if (errors.length){
-        res.status(400).json({"error":errors.join(",")});
-        return;
-    }
-    //Coger datos HTML
+    if (req.body.email == ''){
+        res.render('login', {
+            message: 'No se ha especificado un correo',
+            messageClass: 'alert-danger'
+        });
+    } else if (req.body.password == ''){
+        res.render('login', {
+            message: 'No se ha especificado una contraseña',
+            messageClass: 'alert-danger'
+        });
+    } else {
+     //Coger datos HTML
    var email = req.body.email
    var password = md5(req.body.password)
-    
     //Comprobar que los datos del cliente existen en la base de datos.
-    if(email != '' && password != '') {
         db.all('SELECT email,password FROM user where email="'+email+'" and password="'+password+'"',(err,data)=>{
             if(data.length==1){
                 const token = GenerateAccessToken({email: req.body.email});
@@ -171,22 +199,23 @@ app.post("/template/login", (req, res, next) => {
                         secure: process.env.NODE_ENV === "production",
                     })
                     .status(200)
-                    .json({
-                        message: "Logged in successfully",
-                        datos: "https://localhost:6700/api/cookie/datos_transparente",
-                        logout: "https://localhost:6700/api/cookie/logout"
-                    })
-            }
-    else {
-    //res.send permite mandar codigo HTML5.
-        res.send({
-                message: "Error, usuario y contraseña incorrecto!"
-                })
+                    .render('protected')
+            } else {
+                res.render('login', {
+                    message: 'Usuario y contraseña incorrectos o inexistentes',
+                    messageClass: 'alert-danger'
+                }); 
         return;
     }
-    });
-    }});
+    }); 
+}});
 
+app.get("/template/logout", rutasProtegidas_template, (req, res) => {
+    res
+      .clearCookie("access_token")
+      .status(200)
+      .render('home')
+  });
 // Insert here other API endpoints
 app.get("/api/users", (req, res, next) => {
     var sql = "select * from user"
