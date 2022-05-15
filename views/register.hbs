@@ -1,0 +1,35 @@
+<div class="row justify-content-md-center" style="margin-top: 30px">
+    <div class="col-md-4">
+
+        {{#if message}}
+            <div class="alert {{messageClass}}" role="alert">
+                {{message}}
+            </div>
+        {{/if}}
+
+        <form method="POST" action="/template/insert">
+            <div class="form-group">
+                <label for="firstNameInput">Nombre:</label>
+                <input name="name" type="text" class="form-control" id="firstNameInput">
+            </div>
+
+            <div class="form-group">
+                <label for="emailInput">Dirección Email:</label>
+                <input name="email" type="email" class="form-control" id="emailInput" placeholder="Enter email">
+            </div>
+
+            <div class="form-group">
+                <label for="passwordInput">Contraseña:</label>
+                <input name="password" type="password" class="form-control" id="passwordInput" placeholder="Contraseña">
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPasswordInput">Confirma la contraseña:</label>
+                <input name="passwordc" type="password" class="form-control" id="confirmPasswordInput"
+                    placeholder="Confirma tu contraseña">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+    </div>
+</div>

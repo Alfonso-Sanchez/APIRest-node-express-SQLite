@@ -81,11 +81,111 @@ https
       "Web https://localhost:6700/"
     );
   });
+//
+// LOGIN COOKIE CON TEMPLATES
+//
+
 // Root endpoint
 app.get("/", function (req, res, next) {
     /* res.json({"message":"Ok"}) */
     res.render('home.hbs')
 });
+
+// Register
+app.get('/template/register', (req, res) => {
+    res.render('register');
+});
+// Pagina de login
+app.get('/template/login', (req, res) => {
+    res.render('login');
+});
+// Insertar usuarios
+app.post("/template/insert", (req, res) => {
+    if (req.body.name == ''){
+        res.render('register', {
+            message: 'No se ha especificado un nombre',
+            messageClass: 'alert-danger'
+        });
+    } else if (req.body.email == ''){
+        res.render('register', {
+            message: 'No se ha especificado correo electronico',
+            messageClass: 'alert-danger'
+        });
+    } else if (req.body.password != req.body.passwordc){
+        res.render('register', {
+            message: 'Las contraseñas no coinciden',
+            messageClass: 'alert-danger'
+        });
+    } else {
+        var data = {
+            name: req.body.name,
+            email: req.body.email,
+            password : req.body.password,
+        }
+        var sql ='INSERT INTO user (name, email, password) VALUES (?,?,?)'
+        var params =[data.name, data.email, md5(data.password)]
+        db.run(sql, params, function (err, result) {
+          /*   if (err){
+                res.status(400).json({"error": err.message})
+                return;
+            } */
+            if (err) {
+                res.render('register', {
+                    message: 'Se ha producido un error'+' '+err.message,
+                    messageClass: 'alert-danger'
+                });
+            } else {
+                res.render('login', {
+                    message: 'Se ha completado el registro. Porfavor, entre para continuar',
+                    messageClass: 'alert-success'
+                });
+            }
+        });
+    }
+}); 
+// Login usuarios
+app.post("/template/login", (req, res, next) => {
+    var errors=[]
+    if (!req.body.password){
+        errors.push("No password specified");
+    }
+    if (!req.body.email){
+        errors.push("No email specified");
+    }
+    if (errors.length){
+        res.status(400).json({"error":errors.join(",")});
+        return;
+    }
+    //Coger datos HTML
+   var email = req.body.email
+   var password = md5(req.body.password)
+    
+    //Comprobar que los datos del cliente existen en la base de datos.
+    if(email != '' && password != '') {
+        db.all('SELECT email,password FROM user where email="'+email+'" and password="'+password+'"',(err,data)=>{
+            if(data.length==1){
+                const token = GenerateAccessToken({email: req.body.email});
+                return res
+                    .cookie("access_token", token, {
+                        httpOnly: true,
+                        secure: process.env.NODE_ENV === "production",
+                    })
+                    .status(200)
+                    .json({
+                        message: "Logged in successfully",
+                        datos: "https://localhost:6700/api/cookie/datos_transparente",
+                        logout: "https://localhost:6700/api/cookie/logout"
+                    })
+            }
+    else {
+    //res.send permite mandar codigo HTML5.
+        res.send({
+                message: "Error, usuario y contraseña incorrecto!"
+                })
+        return;
+    }
+    });
+    }});
 
 // Insert here other API endpoints
 app.get("/api/users", (req, res, next) => {
@@ -196,6 +296,7 @@ app.post("/api/user/datos", rutasProtegidas, (req,res) => {
     ];
     res.json(datos);
 });
+
 // LOGIN COOKIE TRANSPARENTE
 app.post("/api/user/cookie_transparente", (req, res, next) => {
     var errors=[]
@@ -238,7 +339,7 @@ app.post("/api/user/cookie_transparente", (req, res, next) => {
         return;
     }
     });
-    };
+    }});
 
 app.get("/api/cookie/datos_transparente", rutasProtegidas_transparente, (req,res) => {
     const datos = [
@@ -281,8 +382,6 @@ app.patch("/api/user/:id", (req, res, next) => {
             })
     });
 })
-
-
 app.delete("/api/user/:id", (req, res, next) => {
     db.run(
         `DELETE FROM user WHERE id = ?`,
@@ -303,4 +402,3 @@ app.delete("/api/user/:id", (req, res, next) => {
 app.use(function (req, res) {
     res.status(404).json({ "error": "Invalid endpoint" });
     });
-});
