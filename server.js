@@ -49,6 +49,7 @@ rutasProtegidas.use((req, res, next) => {
       });
     }
  });
+//middleware TRANSPARENTE
 const rutasProtegidas_transparente = express.Router();
  rutasProtegidas_transparente.use((req, res, next) => {
      const token = req.cookies.access_token;
@@ -125,7 +126,13 @@ app.get('/template/login', (req, res) => {
 app.get('/template/protected', rutasProtegidas_template, (req, res) => {
     res.render('protected');
 });
-
+// pagina log out 
+app.get("/template/logout", rutasProtegidas_template, (req, res) => {
+    res
+      .clearCookie("access_token")
+      .status(200)
+      .render('home')
+  });
 // Insertar usuarios
 app.post("/template/register", (req, res) => {
     if (req.body.name == ''){
@@ -170,7 +177,6 @@ app.post("/template/register", (req, res) => {
         });
     }
 }); 
-
 // Login usuarios
 app.post("/template/login", (req, res, next) => {
     var errors=[]
@@ -209,12 +215,6 @@ app.post("/template/login", (req, res, next) => {
     }); 
 }});
 
-app.get("/template/logout", rutasProtegidas_template, (req, res) => {
-    res
-      .clearCookie("access_token")
-      .status(200)
-      .render('home')
-  });
 // Insert here other API endpoints
 app.get("/api/users", (req, res, next) => {
     var sql = "select * from user"
