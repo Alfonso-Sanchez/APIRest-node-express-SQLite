@@ -5,12 +5,13 @@
   "main": "main.js",
   "scripts": {
     "start": "nodemon server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "author": "Alfonso Sánchez Ferrer",
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "chai": "^4.3.6",
+    "chai-http": "^4.3.0",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
