@@ -89,7 +89,7 @@ const rutasProtegidas_template = express.Router();
      }
  })
 // Start server HTTPS
-https
+/* https
   .createServer(
     {
       key: fs.readFileSync("certificado/server.key"),
@@ -101,7 +101,13 @@ https
     console.log(
       "Web https://localhost:8080/"
     );
-  });
+  }); */
+// Server port
+var HTTP_PORT = 8080 
+// Start server
+app.listen(HTTP_PORT, () => {
+    console.log("Servidor escoltant a l'adreça http://localhost:%PORT%".replace("%PORT%",HTTP_PORT))
+});
 //
 // LOGIN COOKIE CON TEMPLATES
 //
