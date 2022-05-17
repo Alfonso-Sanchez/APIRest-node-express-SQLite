@@ -4,7 +4,7 @@
   "description": "apirest con nodejs, express y sqlite",
   "main": "main.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "npm run start",
     "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "author": "Alfonso Sánchez Ferrer",
