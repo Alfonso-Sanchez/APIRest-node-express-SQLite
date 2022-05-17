@@ -11,7 +11,6 @@ const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 const { url } = require("inspector");
 const exphbs = require('express-handlebars')
-
 // Support URL-Encoded bodies
 app.use(bodyParser.urlencoded({ extended: true}));
 // parse cookies from HTTP Request
@@ -33,7 +32,6 @@ function GenerateAccessToken(email){
 const rutasProtegidas = express.Router(); 
 rutasProtegidas.use((req, res, next) => {
     const token = req.body.token;
- 
     if (token) {
       jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {      
         if (err) {
@@ -312,7 +310,6 @@ app.post("/api/user/login", (req, res, next) => {
                 })
         return;
     }
-
     });
     };
 });
@@ -324,7 +321,6 @@ app.post("/api/user/datos", rutasProtegidas, (req,res) => {
     ];
     res.json(datos);
 });
-
 // LOGIN COOKIE TRANSPARENTE
 app.post("/api/user/cookie_transparente", (req, res, next) => {
     var errors=[]
