@@ -4,7 +4,7 @@
   "description": "apirest con nodejs, express y sqlite",
   "main": "main.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "node server.js",
     "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "author": "Alfonso Sánchez Ferrer",
@@ -19,8 +19,7 @@
     "jsonwebtoken": "^8.5.1",
     "md5": "^2.3.0",
     "mocha": "^10.0.0",
-    "sqlite3": "^5.0.2",
-    "nodemon": "^2.0.15"
+    "sqlite3": "^5.0.2"
   },
   "devDependencies": {
     "javascript-obfuscator": "^4.0.0",
